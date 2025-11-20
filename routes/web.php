@@ -9,7 +9,7 @@ Route::get('/', function () {
 
 Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/publikasi', [PublikasiController::class, 'publikasi'])->name('publikasi.publikasi');
-    Route::get('/publikasi/create', [PublikasiController::class, 'create'])->name('publikasi.create');
+    Route::get('/publikasi/create', [PublikasiController::class, 'addpublikasi'])->name('publikasi.addpublikasi');
     Route::post('/publikasi/store', [PublikasiController::class, 'store'])->name('publikasi.store');
     Route::get('/publikasi/{id}/edit', [PublikasiController::class, 'edit'])->name('publikasi.edit');
     Route::post('/publikasi/{id}/update', [PublikasiController::class, 'update'])->name('publikasi.update');

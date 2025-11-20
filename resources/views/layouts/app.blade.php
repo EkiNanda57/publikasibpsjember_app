@@ -8,7 +8,8 @@
     @vite('resources/css/app.css')
 </head>
 
-<body class="min-h-screen flex flex-col bg-transparent">
+{{-- Pastikan tidak ada margin/padding default di body --}}
+<body class="h-screen flex flex-col bg-transparent m-0 p-0 overflow-hidden">
 
     {{-- Navbar --}}
     <nav class="w-full bg-white shadow-sm py-4 px-6 flex justify-between items-center">
@@ -19,13 +20,14 @@
     </nav>
 
     {{-- CONTENT --}}
-    <main class="flex-grow bg-transparent">
+    {{-- flex-grow memastikan elemen ini mengambil semua ruang vertikal yang tersisa antara Navbar dan Footer --}}
+    <main class="flex-grow bg-transparent overflow-y-auto">
         @yield('content')
     </main>
 
     {{-- FOOTER TANPA BORDER --}}
-    <footer class="py-4 text-center text-sm text-gray-700 bg-transparent">
-        2025 Publikasi Digital – BPS Kabupaten Jember
+    <footer class="py-4 text-center text-sm text-gray-700 bg-transparent flex-shrink-0">
+        2025 Publikasi Digital - BPS Kabupaten Jember
     </footer>
 
 </body>
