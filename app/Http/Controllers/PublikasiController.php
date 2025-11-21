@@ -10,20 +10,28 @@ use Illuminate\Support\Facades\File;
 class PublikasiController extends Controller
 {
     /**
-     * Menampilkan semua data publikasi
+     * Menampilkan halaman daftar publikasi (admin)
      */
-    public function index()
+    public function publikasi(Request $request)
     {
-        $publikasi = Publikasi::orderBy('id', 'desc')->paginate(20);
-        return view('publikasi.publikasi', compact('publikasi'));
+        $search = $request->search;
+
+        $publikasi = Publikasi::when($search, function ($q) use ($search) {
+            $q->where('judul', 'like', "%{$search}%")
+              ->orWhere('deskripsi', 'like', "%{$search}%");
+        })
+        ->orderBy('id', 'desc')
+        ->paginate(20);
+
+        return view('publikasi.publikasi', compact('publikasi', 'search'));
     }
 
     /**
      * Form tambah publikasi
      */
-    public function create()
+    public function addpublikasi()
     {
-        return view('publikasi.create');
+        return view('publikasi.addpublikasi');
     }
 
     /**
@@ -32,9 +40,9 @@ class PublikasiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'judul'     => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'tipe_file' => 'required|string',   // file atau link
+            'judul'       => 'required|string|max:255',
+            'deskripsi'   => 'nullable|string',
+            'tipe_file'   => 'required|string',
 
             'file_upload' => 'nullable|file|mimes:pdf,doc,docx,xlsx,ppt,pptx|max:20480',
             'url'         => 'nullable|url'
@@ -42,7 +50,7 @@ class PublikasiController extends Controller
 
         $filePath = null;
 
-        // Jika tipe file adalah FILE → upload file
+        // Upload file jika tipe = file
         if ($request->tipe_file === 'file' && $request->hasFile('file_upload')) {
             $file = $request->file('file_upload');
             $namaFile = time() . '_' . $file->getClientOriginalName();
@@ -55,19 +63,19 @@ class PublikasiController extends Controller
             'tipe_file'   => $request->tipe_file,
             'file_path'   => $filePath,
             'url'         => $request->url,
-            'uploaded_by' => Auth::id(),  // admin yang upload
+            'uploaded_by' => Auth::id(),
         ]);
 
-        return redirect()->route('publikasi.index')->with('success', 'Publikasi berhasil ditambahkan.');
+        return redirect()->route('publikasi.publikasi')->with('success', 'Publikasi berhasil ditambahkan.');
     }
 
     /**
-     * Form edit publikasi
+     * Form edit
      */
-    public function edit($id)
+    public function editpublikasi($id)
     {
         $publikasi = Publikasi::findOrFail($id);
-        return view('publikasi.edit', compact('publikasi'));
+        return view('publikasi.editpublikasi', compact('publikasi'));
     }
 
     /**
@@ -78,9 +86,9 @@ class PublikasiController extends Controller
         $publikasi = Publikasi::findOrFail($id);
 
         $request->validate([
-            'judul'     => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'tipe_file' => 'required|string',
+            'judul'       => 'required|string|max:255',
+            'deskripsi'   => 'nullable|string',
+            'tipe_file'   => 'required|string',
 
             'file_upload' => 'nullable|file|mimes:pdf,doc,docx,xlsx,ppt,pptx|max:20480',
             'url'         => 'nullable|url'
@@ -88,7 +96,7 @@ class PublikasiController extends Controller
 
         $filePath = $publikasi->file_path;
 
-        // Jika upload file baru → hapus file lama
+        // Upload file baru
         if ($request->tipe_file === 'file' && $request->hasFile('file_upload')) {
 
             if ($filePath && File::exists(public_path('storage/' . $filePath))) {
@@ -101,14 +109,14 @@ class PublikasiController extends Controller
         }
 
         $publikasi->update([
-            'judul'       => $request->judul,
-            'deskripsi'   => $request->deskripsi,
-            'tipe_file'   => $request->tipe_file,
-            'file_path'   => $filePath,
-            'url'         => $request->url,
+            'judul'     => $request->judul,
+            'deskripsi' => $request->deskripsi,
+            'tipe_file' => $request->tipe_file,
+            'file_path' => $filePath,
+            'url'       => $request->url,
         ]);
 
-        return redirect()->route('publikasi.index')->with('success', 'Publikasi berhasil diperbarui.');
+        return redirect()->route('publikasi.publikasi')->with('success', 'Publikasi berhasil diperbarui.');
     }
 
     /**
@@ -118,13 +126,19 @@ class PublikasiController extends Controller
     {
         $publikasi = Publikasi::findOrFail($id);
 
-        // Jika ada file → hapus fisik
         if ($publikasi->file_path && File::exists(public_path('storage/' . $publikasi->file_path))) {
             File::delete(public_path('storage/' . $publikasi->file_path));
         }
 
         $publikasi->delete();
 
-        return redirect()->route('publikasi.index')->with('success', 'Publikasi berhasil dihapus.');
+        return redirect()->route('publikasi.publikasi')->with('success', 'Publikasi berhasil dihapus.');
     }
+
+        public function detailpublikasi($id)
+    {
+        $data = Publikasi::findOrFail($id);
+        return view('publikasi.detailpublikasi', compact('data'));
+    }
+
 }

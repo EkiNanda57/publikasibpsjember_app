@@ -48,8 +48,7 @@ class LoginController extends Controller
             cookie()->queue(cookie()->forget('remember_username'));
         }
 
-        // ✔ Session tetap diset agar login langsung aktif
-        session(['user_id' => $user->id]);
+        Auth::login($user);
 
         return redirect('/publikasi');
     }

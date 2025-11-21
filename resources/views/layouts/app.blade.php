@@ -14,7 +14,7 @@
     {{-- Navbar --}}
     <nav class="w-full bg-white shadow-sm py-4 px-6 flex justify-between items-center">
         <div class="flex items-center gap-3">
-            <img src="logo/logo-bps.png" class="h-8" alt="logo">
+            <img src="{{ asset('logo/logo-bps.png') }}" class="h-8" alt="logo">
             <h1 class="font-bold text-lg">Publikasi Digital</h1>
         </div>
 
