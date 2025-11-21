@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\PublikasiController;
+use App\Http\Controllers\PenggunaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,11 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 Route::get('/publikasi', [PublikasiController::class, 'publikasi']);
+Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.halamanpengguna');
+Route::get('/pengguna/detail/{id}', [PenggunaController::class, 'detailpublikasi'])
+     ->name('publikasi.detail-pengguna'); // <-- ini route baru untuk detail pengguna
+
+
 
 
 /*
