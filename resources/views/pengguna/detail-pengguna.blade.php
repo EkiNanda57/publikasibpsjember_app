@@ -49,7 +49,7 @@
                 <a href="{{ $data->url }}" target="_blank"
                    class="block w-full mt-2 text-center py-3 rounded-xl border border-green-600 text-green-600 
                           hover:bg-green-600 hover:text-white transition">
-                    🔗 Kunjungi Link Publikasi
+                    Kunjungi Link Publikasi
                 </a>
             @endif
         </div>

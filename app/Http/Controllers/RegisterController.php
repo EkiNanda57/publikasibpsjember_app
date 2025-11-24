@@ -14,7 +14,7 @@ class RegisterController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi awal (username + panjang password + beda username)
+        // Validasi awal
         $request->validate([
             'username' => 'required|unique:users,username|max:10',
             'password' => 'required|size:8|different:username',
@@ -30,32 +30,31 @@ class RegisterController extends Controller
 
         $password = $request->password;
 
-        // ⚠️ CEK SIMBOL TERLARANG
+        // Cek simbol yang diperbolehkan
         if (!preg_match('/^[A-Za-z0-9@._]+$/', $password)) {
             return back()->withErrors(['password' => 'Simbol yang boleh digunakan hanya @ . _'])->withInput();
         }
 
-        // ⚠️ CEK KOMBINASI UNIK (huruf-angka / huruf-simbol / angka-simbol)
+        // Cek kombinasi unik
         $hasLetter = preg_match('/[A-Za-z]/', $password);
         $hasNumber = preg_match('/[0-9]/', $password);
         $hasSymbol = preg_match('/[@._]/', $password);
 
         if (
-            !(
-                ($hasLetter && $hasNumber) ||
-                ($hasLetter && $hasSymbol) ||
-                ($hasNumber && $hasSymbol)
-            )
+            !( ($hasLetter && $hasNumber) ||
+               ($hasLetter && $hasSymbol) ||
+               ($hasNumber && $hasSymbol) )
         ) {
             return back()->withErrors(['password' => 'Password harus unik.'])->withInput();
         }
 
-        // Simpan ke database
+        // ⬇⬇⬇ BAGIAN PENTING: set level otomatis admin
         User::create([
             'username' => $request->username,
             'password' => bcrypt($request->password),
+            'level'    => 'admin',   // otomatis admin
         ]);
 
-        return redirect('/')->with('success', 'Akun berhasil dibuat, silakan login.');
+        return redirect('/')->with('success', 'Akun admin berhasil dibuat, silakan login.');
     }
 }

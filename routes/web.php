@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\PublikasiController;
@@ -12,16 +13,16 @@ use App\Http\Controllers\PenggunaController;
 |--------------------------------------------------------------------------
 */
 
-// Halaman login asli
+// Halaman login
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'attemptLogin'])->name('login.attempt');
 
-// Redirect root "/" ke publikasi publik
+// Redirect root "/" 
 Route::get('/', function () {
-    if (session('user_id')) {
-        return redirect('/admin/publikasi'); // halaman admin
+    if (Auth::check()) { 
+        return redirect('/admin/publikasi'); 
     }
-    return redirect()->route('login'); // belum login
+    return redirect()->route('login');
 });
 
 
@@ -30,12 +31,11 @@ Route::get('/', function () {
 | HALAMAN PUBLIK (TANPA LOGIN)
 |--------------------------------------------------------------------------
 */
+
 Route::get('/publikasi', [PublikasiController::class, 'publikasi']);
 Route::get('/pengguna', [PenggunaController::class, 'index'])->name('pengguna.halamanpengguna');
 Route::get('/pengguna/detail/{id}', [PenggunaController::class, 'detailpublikasi'])
-     ->name('publikasi.detail-pengguna'); // <-- ini route baru untuk detail pengguna
-
-
+     ->name('publikasi.detail-pengguna');
 
 
 /*
@@ -43,6 +43,7 @@ Route::get('/pengguna/detail/{id}', [PenggunaController::class, 'detailpublikasi
 | REGISTER
 |--------------------------------------------------------------------------
 */
+
 Route::get('/register', [RegisterController::class, 'showRegister'])->name('register');
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
@@ -52,6 +53,7 @@ Route::post('/register', [RegisterController::class, 'store'])->name('register.s
 | LUPA PASSWORD
 |--------------------------------------------------------------------------
 */
+
 Route::get('/forgot-password', [LoginController::class, 'showForgotPassword'])->name('password.forgot');
 Route::post('/forgot-password', [LoginController::class, 'processForgotPassword'])->name('password.forgot.process');
 
@@ -61,6 +63,7 @@ Route::post('/forgot-password', [LoginController::class, 'processForgotPassword'
 | ADMIN (HARUS LOGIN)
 |--------------------------------------------------------------------------
 */
+
 Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/publikasi', [PublikasiController::class, 'publikasi'])->name('publikasi.publikasi');
@@ -79,7 +82,8 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 | LOGOUT
 |--------------------------------------------------------------------------
 */
+
 Route::get('/logout', function () {
-    session()->forget('user_id');
+    Auth::logout();
     return redirect('/login')->with('success', 'Anda berhasil logout.');
 })->name('logout');
