@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.publik')
+
+@section('title', 'Detail Publikasi')
 
 @section('content')
 

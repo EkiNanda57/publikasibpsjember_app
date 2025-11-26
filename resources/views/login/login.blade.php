@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Login</title>
+    <link rel="icon" type="image/png" href="{{ asset('logo/logobps_jember.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
@@ -33,10 +34,10 @@
                 @csrf
 
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Username
                     </label>
-                    <input type="text" name="email" id="email" placeholder="Masukkan username"
+                    <input type="text" name="username" id="username" placeholder="Masukkan username"
                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl
                            focus:ring-2 focus:ring-blue-400 focus:border-blue-500
                            dark:bg-gray-700 dark:text-white transition duration-150">

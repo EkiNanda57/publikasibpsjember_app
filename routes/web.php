@@ -7,22 +7,22 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\PublikasiController;
 use App\Http\Controllers\PenggunaController;
 
+
 /*
 |--------------------------------------------------------------------------
 | AUTH (LOGIN)
 |--------------------------------------------------------------------------
 */
 
-// Halaman login
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'attemptLogin'])->name('login.attempt');
 
-// Redirect root "/" 
+// Jika sudah login → masuk admin
+// Jika belum → ke login
 Route::get('/', function () {
-    if (Auth::check()) { 
-        return redirect('/admin/publikasi'); 
-    }
-    return redirect()->route('login');
+    return Auth::check()
+        ? redirect('/admin/publikasi')
+        : redirect()->route('login');
 });
 
 
@@ -60,11 +60,13 @@ Route::post('/forgot-password', [LoginController::class, 'processForgotPassword'
 
 /*
 |--------------------------------------------------------------------------
-| ADMIN (HARUS LOGIN)
+| ADMIN (HARUS LOGIN + LEVEL ADMIN)
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('admin')->middleware('auth')->group(function () {
+Route::prefix('admin')
+    ->middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])
+    ->group(function () {
 
     Route::get('/publikasi', [PublikasiController::class, 'publikasi'])->name('publikasi.publikasi');
     Route::get('/publikasi/create', [PublikasiController::class, 'addpublikasi'])->name('publikasi.addpublikasi');

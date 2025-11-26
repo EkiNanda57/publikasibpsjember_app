@@ -17,20 +17,16 @@ class LoginController extends Controller
     public function attemptLogin(Request $request)
     {
         // Validasi input
-        if (empty($request->email) && empty($request->password)) {
-            return back()->with('error_message', '⚠️ Silahkan isi username dan password Anda.');
-        }
-
-        if (empty($request->email)) {
-            return back()->with('error_message', '⚠️ Username wajib diisi.');
-        }
-
-        if (empty($request->password)) {
-            return back()->with('error_message', '⚠️ Password wajib diisi.');
-        }
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ], [
+            'username.required' => '⚠️ Username wajib diisi.',
+            'password.required' => '⚠️ Password wajib diisi.',
+        ]);
 
         // Ambil user berdasarkan username
-        $user = User::where('username', $request->email)->first();
+        $user = User::where('username', $request->username)->first();
 
         if (!$user) {
             return back()->with('error_message', '⚠️ Username tidak ditemukan.');
@@ -41,16 +37,22 @@ class LoginController extends Controller
             return back()->with('error_message', '❌ Password salah.');
         }
 
-        // ✔ Jika user pilih "Ingat Saya", simpan cookie 7 hari
-        if ($request->has('remember')) {
-            cookie()->queue(cookie('remember_username', $request->email, 60 * 24 * 7));
+        // ✔ Simpan cookie Remember Me (7 hari)
+        if ($request->remember) {
+            cookie()->queue(cookie('remember_username', $request->username, 60 * 24 * 7));
         } else {
             cookie()->queue(cookie()->forget('remember_username'));
         }
 
         Auth::login($user);
 
-        return redirect('/publikasi');
+        // Opsional: redirect beda sesuai level
+        if ($user->level === 'admin') {
+            return redirect('/publikasi');
+        }
+
+        // Jika bukan admin
+        return redirect('/publikasi'); 
     }
 
     public function showForgotPassword()
@@ -63,6 +65,10 @@ class LoginController extends Controller
         $request->validate([
             'username' => 'required',
             'password' => 'required|min:8',
+        ], [
+            'username.required' => 'Username wajib diisi.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 8 karakter.',
         ]);
 
         $user = User::where('username', $request->username)->first();
@@ -78,7 +84,4 @@ class LoginController extends Controller
 
         return redirect()->route('login')->with('success', 'Password berhasil diganti! Silakan login.');
     }
-
-
-
 }

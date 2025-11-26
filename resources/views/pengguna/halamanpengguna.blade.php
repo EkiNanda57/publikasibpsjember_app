@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.publik')
+
+@section('title', 'Data Publikasi')
 
 @section('content')
 
@@ -57,11 +59,10 @@
                         <td class="p-3 font-medium">{{ $p->judul }}</td>
                         <td class="p-3">{{ Str::limit($p->deskripsi, 50) }}</td>
                         <td class="p-3">
-                           <a href="{{ route('publikasi.detail-pengguna', $p->id) }}"
-   class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
-   Detail
-</a>
-
+                            <a href="{{ route('publikasi.detail-pengguna', $p->id) }}"
+                               class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                               Detail
+                            </a>
                         </td>
                     </tr>
                     @endforeach
@@ -78,7 +79,7 @@
 <script>
     const input = document.getElementById('searchInput');
     input.addEventListener('keyup', function () {
-        input.form.submit(); // submit otomatis saat ketik
+        input.form.submit();
     });
 </script>
 

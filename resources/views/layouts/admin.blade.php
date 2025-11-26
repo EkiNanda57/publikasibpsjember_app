@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@yield('title', 'Default Title')</title>
+    <link rel="icon" type="image/png" href="{{ asset('logo/logobps_jember.png') }}">
+    @vite('resources/css/app.css')
+</head>
+
+<body class="h-screen flex flex-col bg-gray-50">
+
+    {{-- NAVBAR ADMIN --}}
+    <nav class="w-full bg-white shadow-sm py-4 px-6 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <img src="{{ asset('logo/logo-bps.png') }}" class="h-8" alt="logo">
+            <h1 class="font-bold text-lg">Publikasi Digital</h1>
+        </div>
+
+        {{-- TOMBOL LOGOUT --}}
+        <a href="{{ route('logout') }}"
+            class="flex items-center gap-2 text-gray-600 hover:text-red-500 transition duration-150"
+            title="Logout">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 
+                    2.25 0 005.25 5.25v13.5A2.25 
+                    2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M9 
+                    12h12m0 0l-3-3m3 3l-3 3" />
+            </svg>
+            <span class="font-medium">Keluar</span>
+        </a>
+    </nav>
+
+    <main class="flex-grow overflow-y-auto">
+        @yield('content')
+    </main>
+
+    <footer class="py-4 text-center text-sm text-gray-700">
+        2025 Publikasi Digital - BPS Kabupaten Jember
+    </footer>
+
+</body>
+</html>
